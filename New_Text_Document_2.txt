@@ -1,0 +1,394 @@
+////Even or Odd
+
+.MODEL SMALL
+.STACK 100H
+.DATA  
+
+MSG1 DB "EVEN",0AH,0DH,24H
+MSG2 DB "ODD",0AH,0DH,24H
+MSG3 DB "",0AH,0DH,24H 
+MSG4 DB "INVALID",0AH,0DH,24H
+
+.CODE
+
+MAIN PROC
+    
+    MOV AX,@DATA
+    MOV DS,AX
+    
+    MOV AH,1
+    INT 21H 
+    
+    
+    CMP AL,30H
+    
+    JL INVALID
+    
+    
+    CMP AL,39H
+    JG INVALID
+    
+
+    
+    MOV BL,1
+    
+    TEST AL,BL
+    
+    JNZ ODD
+    
+    EVEN:     
+    LEA DX,MSG3
+    MOV AH,09
+    INT 21H
+        
+    LEA DX,MSG1
+    MOV AH,09
+    INT 21H
+    JMP EXIT  
+    
+    ODD:    
+    LEA DX,MSG3
+    MOV AH,09
+    INT 21H
+    
+    LEA DX,MSG2
+    MOV AH,09
+    INT 21H
+    JMP EXIT  
+    
+    INVALID:
+        
+    LEA DX,MSG3
+    MOV AH,09
+    INT 21H
+    
+    LEA DX,MSG4
+    MOV AH,09
+    INT 21H
+    JMP EXIT    
+    
+    
+    
+    
+    
+    
+    EXIT:
+    MOV AH,4CH
+    INT 21H
+    MAIN ENDP
+END MAIN
+
+
+///Upper Lower
+
+.MODEL SMALL
+.STACK 100H
+.DATA  
+
+MSG1 DB "UPPER",0AH,0DH,24H
+MSG2 DB "LOWER",0AH,0DH,24H
+MSG3 DB "",0AH,0DH,24H 
+MSG4 DB "INVALID",0AH,0DH,24H
+
+.CODE
+
+MAIN PROC
+    
+    MOV AX,@DATA
+    MOV DS,AX
+    
+    MOV AH,1
+    INT 21H 
+    
+    
+    CMP AL,"A"
+    JL INVALID
+    
+    
+    CMP AL,"Z"
+    JG LOWER
+    
+    JMP CONVERT
+    
+    LOWER: 
+    
+    CMP AL,"a"
+    JL INVALID    
+    
+    
+    
+    CMP AL,"z"
+    JG INVALID
+    
+    
+
+    
+
+    
+    CONVERT:
+    
+    MOV BL,AL
+    XOR BL,20H
+     
+    
+    LEA DX,MSG3
+    MOV AH,09
+    INT 21H 
+        
+    MOV AH,02
+    MOV DL,BL
+    INT 21H 
+    
+    JMP EXIT    
+
+    
+    INVALID:
+        
+    LEA DX,MSG3
+    MOV AH,09
+    INT 21H
+    
+    LEA DX,MSG4
+    MOV AH,09
+    INT 21H
+    JMP EXIT    
+    
+    
+    
+    
+    
+    
+    EXIT:
+    MOV AH,4CH
+    INT 21H
+    MAIN ENDP
+END MAIN
+
+///User input output binary
+
+.MODEL SMALL
+.STACK 100H
+.DATA        
+
+ BRK DB "",0AH,0DH,24H 
+
+.CODE
+
+MAIN PROC
+    
+
+    
+    MOV BX,0B 
+    
+    MOV CX,0H
+    
+
+    MOV AH,01
+    INT 21H
+           
+           
+    TOP:   
+    CMP AL,0DH
+    JE PRINT
+    INC CX
+    
+    CMP AL,"0" 
+    JNE CHECK
+    JMP STORE 
+    
+    
+    CHECK:
+
+    CMP AL,"1"
+    JNE EXIT
+
+    STORE:
+    SHR AL,01H
+    RCL BL,01H
+
+    
+    MOV AH,01
+    INT 21H
+    
+    JMP TOP  
+    
+    PRINT:
+    
+    MOV AH,02H
+    MOV DL,0AH
+    INT 21H
+    
+    MOV AH,02
+    MOV DL,0DH
+    INT 21H 
+    
+
+    
+    TOP2:
+     RCL BX,1
+     JC ONE
+     
+     ZERO:   
+     
+     MOV AH,02
+     MOV DL,"0"
+     INT 21H
+     
+     JMP SKIP
+
+     
+     ONE:
+     MOV AH,02
+     MOV DL,'1'
+     INT 21H
+     
+
+     SKIP:
+     DEC CX
+     CMP CX,0H
+     JE EXIT
+     
+     JMP TOP2
+     
+    
+    
+    
+    
+    
+    EXIT:
+    MOV AH,4CH
+    INT 21H
+    MAIN ENDP
+END MAIN
+
+///Bit reverse
+.MODEL SMALL
+.STACK 100H
+.DATA  
+
+
+.CODE
+
+MAIN PROC
+    
+    MOV AL,11011100B 
+    
+    MOV BX,0B
+    
+    MOV CX,8
+    
+    TOP:
+    
+    SHR AL,1B
+    RCL BL,1B    
+    
+    
+    
+    LOOP TOP
+    
+    
+    
+    
+    
+    EXIT:
+    MOV AH,4CH
+    INT 21H
+    MAIN ENDP
+END MAIN
+
+
+/user input output hexa 
+.MODEL SMALL
+.STACK 100H
+.DATA        
+
+ BRK DB "",0AH,0DH,24H 
+
+.CODE
+
+MAIN PROC
+    
+
+    
+    MOV BX,0B 
+    
+    MOV CX,0H
+    
+
+    MOV AH,01
+    INT 21H
+           
+           
+    TOP:   
+    CMP AL,0DH
+    JE PRINT
+    INC CX
+    
+    CMP AL,"0" 
+    JNE CHECK
+    JMP STORE 
+    
+    
+    CHECK:
+
+    CMP AL,"1"
+    JNE EXIT
+
+    STORE:
+    SHR AL,01H
+    RCL BL,01H
+
+    
+    MOV AH,01
+    INT 21H
+    
+    JMP TOP  
+    
+    PRINT:
+    
+    MOV AH,02H
+    MOV DL,0AH
+    INT 21H
+    
+    MOV AH,02
+    MOV DL,0DH
+    INT 21H 
+    
+
+    
+    TOP2:
+     RCL BX,1
+     JC ONE
+     
+     ZERO:   
+     
+     MOV AH,02
+     MOV DL,"0"
+     INT 21H
+     
+     JMP SKIP
+
+     
+     ONE:
+     MOV AH,02
+     MOV DL,'1'
+     INT 21H
+     
+
+     SKIP:
+     DEC CX
+     CMP CX,0H
+     JE EXIT
+     
+     JMP TOP2
+     
+    
+    
+    
+    
+    
+    EXIT:
+    MOV AH,4CH
+    INT 21H
+    MAIN ENDP
+END MAIN
